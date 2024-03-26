@@ -34,8 +34,8 @@ ALLOWED_HOSTS = [
     '127.0.0.1',]
 
 CORS_ALLOWED_ORIGINS = [
-    'localhost',
-    '127.0.0.1',
+    'http://localhost:4200',
+    'http://127.0.0.1:4200',
 ]
 # Application definition
 
@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'rest_framework',
     "debug_toolbar",
     'content.apps.ContentConfig',
