@@ -17,3 +17,4 @@ class RegistrationView(generics.CreateAPIView):
         if User.objects.filter(email=email).exists():
             return Response({'error': 'Email already exists'}, status=400)
         return self.create(request, *args, **kwargs)
+
