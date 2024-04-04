@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     "debug_toolbar",
+    "django_rq",
     'content.apps.ContentConfig',
     'user',
 ]
@@ -84,6 +85,22 @@ CACHES = {
         "KEY_PREFIX": "videoflix"
     }
 }
+
+RQ_QUEUES = {
+    'default': {
+        'HOST': 'localhost',
+        'PORT': 6379,
+        'DB': 0,
+       # 'USERNAME': 'some-user',
+        'PASSWORD': 'foobared',
+        'DEFAULT_TIMEOUT': 360,
+      # 'REDIS_CLIENT_KWARGS': {    # Eventual additional Redis connection arguments
+      #     'ssl_cert_reqs': None,
+      # },
+    },
+}
+
+#RQ_EXCEPTION_HANDLERS = ['path.to.my.handler'] # If you need custom exception handlers
 
 ROOT_URLCONF = 'videoflix.urls'
 

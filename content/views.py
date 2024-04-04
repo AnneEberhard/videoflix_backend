@@ -17,7 +17,7 @@ CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 
 class VideoView(APIView):
 
-    @cache_page(CACHE_TTL)
+   # @cache_page(CACHE_TTL)
     def get(self, request):
         uploaded_videos = Video.objects.all()
         serializer = VideoSerializer(uploaded_videos, many=True)
