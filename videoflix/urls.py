@@ -19,13 +19,13 @@ from django.conf import settings
 from django.urls import path, include
 from django.conf.urls.static import static
 from user.views import LoginView, RegistrationView
-from content.views import VideoView
+from content.views import video_overview
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("__debug__/", include("debug_toolbar.urls")),
     path('register/', RegistrationView.as_view()),
     path('login/', LoginView.as_view()),
-    path('video/', VideoView.as_view()),
+    path('video/', video_overview),
     path('django-rq/', include('django_rq.urls')),
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

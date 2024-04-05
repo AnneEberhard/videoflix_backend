@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.http import JsonResponse
 from django.shortcuts import render
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -15,10 +16,9 @@ from .models import Video
 # is defined in the settings
 CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 
-class VideoView(APIView):
 
-    @cache_page(CACHE_TTL)
-    def get(self, request):
-        uploaded_videos = Video.objects.all()
-        serializer = VideoSerializer(uploaded_videos, many=True)
-        return Response(serializer.data)    
+@cache_page(CACHE_TTL)
+def video_overview(request):
+    uploaded_videos = Video.objects.all()
+    serializer = VideoSerializer(uploaded_videos, many=True)
+    return JsonResponse(serializer.data, safe=False)  
