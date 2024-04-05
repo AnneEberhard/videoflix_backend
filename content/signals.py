@@ -1,5 +1,5 @@
 import os
-
+import django_rq
 from .tasks import convert480p, convert720p
 from .models import Video
 from django.dispatch import receiver
@@ -10,8 +10,9 @@ def video_pos_save(sender, instance, created, **kwargs):
     print('Video')
     if created:
         print('new video created')
-        convert480p(instance.video_file.path)
-        convert720p(instance.video_file.path)
+        queue = django_rq.get_queue('default', autocommit=True) #default ist die einzige Art, die in den settings definiert ist
+        queue.enqueue(convert480p, instance.video_file.path) # ersetzt convert480p(instance.video_file.path)
+        queue.enqueue(convert720p, instance.video_file.path) #convert720p(instance.video_file.path)
 
 
 @receiver(post_delete, sender=Video)
