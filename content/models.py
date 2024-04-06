@@ -6,7 +6,7 @@ class Video(models.Model):
     title = models.CharField(max_length=80)
     description = models.CharField(max_length=500)
     video_file = models.FileField(upload_to='videos', blank=True, null=True)
-    thumbnail_url = models.CharField(max_length=80, default='')
+    thumbnail_file = models.FileField(upload_to='thumbnails', blank=True, null=True)
 
 
     def __str__(self):
