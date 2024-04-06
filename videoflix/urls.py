@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.conf import settings
 from django.urls import path, include
 from django.conf.urls.static import static
-from user.views import LoginView, RegistrationView, ActivationView
+from user.views import ActivationView, LoginView, RegistrationView, ActivationSuccessView, ActivationFailureView
 from content.views import video_overview
 
 urlpatterns = [
@@ -29,4 +29,6 @@ urlpatterns = [
     path('video/', video_overview),
     path('django-rq/', include('django_rq.urls')),
     path('activate/<uidb64>/<token>/', ActivationView.as_view(), name='activate'),
+    path('activation/success/', ActivationSuccessView.as_view(), name='activation_success'),
+    path('activation/failure/', ActivationFailureView.as_view(), name='activation_failure'),
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

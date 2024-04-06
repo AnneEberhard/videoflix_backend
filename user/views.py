@@ -59,14 +59,14 @@ class RegistrationView(generics.CreateAPIView):
         uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
         token = default_token_generator.make_token(user)
 
-        activation_link = f"{settings.BACKEND_URL}/activate/?uidb64={uidb64}&token={token}/"
+        activation_link = f"{settings.BACKEND_URL}/activate/{uidb64}/{token}/"
 
         subject = 'Account Activation'
         html_message = render_to_string('activation_email.html', {'activation_link': activation_link})
         plain_message = strip_tags(html_message) 
         from_email = 'noreply@videoflix.com'
         to_email = [email]
-
+        print(activation_link)
         send_mail(subject, plain_message, from_email, to_email, html_message=html_message)
 
         return Response({'success': 'Account created. Please check your email to activate your account.'}, status=status.HTTP_201_CREATED)
@@ -101,8 +101,8 @@ class ActivationFailureView(TemplateView):
         return context
 
 
-class ActivationFailureView(TemplateView):
-    template_name = 'activation_failure.html'
+class ActivationSuccessView(TemplateView):
+    template_name = 'activation_success.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
