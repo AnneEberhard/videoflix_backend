@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.shortcuts import render
 from rest_framework import generics, status
 from rest_framework.response import Response
@@ -17,6 +18,7 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.views import View
 from django.contrib.auth import get_user_model
+from django.views.generic import TemplateView
 
 
 """
@@ -39,7 +41,6 @@ class LoginView(ObtainAuthToken):
         })  
 
 
-
 class RegistrationView(generics.CreateAPIView):
     serializer_class = UserSerializer
 
@@ -58,7 +59,7 @@ class RegistrationView(generics.CreateAPIView):
         uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
         token = default_token_generator.make_token(user)
 
-        activation_link = f"http://127.0.0.1:5500/activate/?uidb64={uidb64}&token={token}"
+        activation_link = f"{settings.BACKEND_URL}/activate/?uidb64={uidb64}&token={token}/"
 
         subject = 'Account Activation'
         html_message = render_to_string('activation_email.html', {'activation_link': activation_link})
@@ -68,8 +69,6 @@ class RegistrationView(generics.CreateAPIView):
 
         send_mail(subject, plain_message, from_email, to_email, html_message=html_message)
 
-        # Redirect to a success page or whatever you need
-        #return redirect(reverse('registration_success'))
         return Response({'success': 'Account created. Please check your email to activate your account.'}, status=status.HTTP_201_CREATED)
     
 
@@ -92,35 +91,59 @@ class ActivationView(View):
             return redirect(reverse('activation_failure'))
 
 
-class RegistrationView2(generics.CreateAPIView):
-    serializer_class = UserSerializer 
+class ActivationFailureView(TemplateView):
+    template_name = 'activation_failure.html'
 
-    def post(self, request, *args, **kwargs):
-        email = request.data.get('email')
-        if User.objects.filter(email=email).exists():
-            return Response({'error': 'Email already exists'}, status=status.HTTP_400_BAD_REQUEST)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['frontend_url'] = settings.FRONTEND_URL
 
-        user_serializer = self.get_serializer(data=request.data)
-        user_serializer.is_valid(raise_exception=True)
-        user = user_serializer.save()
+        return context
 
-        token_generator = default_token_generator
-        uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
-        token = token_generator.make_token(user)
 
-        activation_link = f"http://127.0.0.1:5500/activate/?uidb64={uidb64}&token={token}"
-        #activation_link = f"https://yourdomain.com/activate/?uidb64={uidb64}&token={token}"
+class ActivationFailureView(TemplateView):
+    template_name = 'activation_failure.html'
 
-        subject = 'Account Activation'
-        html_message = render_to_string('activation_email.html', {'activation_link': activation_link})
-        plain_message = strip_tags(html_message)  # Strip HTML tags for plain text email
-        from_email = 'noreply@videoflix.com'
-        to_email = [email]
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['frontend_url'] = settings.FRONTEND_URL
 
-        send_mail(subject, plain_message, from_email, to_email, html_message=html_message)
+        return context
 
-        return Response({'success': 'Account created. Please check your email to activate your account.'}, status=status.HTTP_201_CREATED)
-#    
+
+
+
+
+#lass RegistrationView2(generics.CreateAPIView):
+#   serializer_class = UserSerializer 
+#
+#   def post(self, request, *args, **kwargs):
+#       email = request.data.get('email')
+#       if User.objects.filter(email=email).exists():
+#           return Response({'error': 'Email already exists'}, status=status.HTTP_400_BAD_REQUEST)
+#
+#       user_serializer = self.get_serializer(data=request.data)
+#       user_serializer.is_valid(raise_exception=True)
+#       user = user_serializer.save()
+#
+#       token_generator = default_token_generator
+#       uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+#       token = token_generator.make_token(user)
+#
+#       activation_link = f"http://127.0.0.1:5500/activate/?uidb64={uidb64}&token={token}"
+#       #activation_link = f"https://yourdomain.com/activate/?uidb64={uidb64}&token={token}"
+#
+#       subject = 'Account Activation'
+#       html_message = render_to_string('activation_email.html', {'activation_link': activation_link})
+#       plain_message = strip_tags(html_message)  # Strip HTML tags for plain text email
+#       from_email = 'noreply@videoflix.com'
+#       to_email = [email]
+#
+#       send_mail(subject, plain_message, from_email, to_email, html_message=html_message)
+#
+#       return Response({'success': 'Account created. Please check your email to activate your account.'}, status=status.HTTP_201_CREATED)
+#
+   
 #
 #class ActivationView(View):
 #    def get(self, request, uidb64, token):
