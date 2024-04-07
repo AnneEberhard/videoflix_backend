@@ -25,7 +25,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("__debug__/", include("debug_toolbar.urls")),
     path('register/', RegistrationView.as_view()),
-    path('login/', LoginView.as_view()),
+    path('login/', LoginView.as_view(), name='login'),
     path('video/', video_overview),
     path('django-rq/', include('django_rq.urls')),
     path('activate/<uidb64>/<token>/', ActivationView.as_view(), name='activate'),

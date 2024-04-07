@@ -2,10 +2,12 @@ from django.conf import settings
 from django.shortcuts import render
 from rest_framework import generics, status
 from rest_framework.response import Response
+from .serializer import LoginViewSerializer, UserSerializer
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
-from .serializer import UserSerializer
-from django.contrib.auth.models import User
+from rest_framework.views import APIView
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
@@ -21,26 +23,45 @@ from django.contrib.auth import get_user_model
 from django.views.generic import TemplateView
 
 
+
+"""
+This view handles login
+"""
+class LoginView(ObtainAuthToken):
+    serializer_class = LoginViewSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+
+        user = serializer.validated_data['user']
+
+        if not user.is_active:
+            return Response({'error': 'Account not activated'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        token, created = Token.objects.get_or_create(user=user)
+
+        return Response({'token': token.key,
+                                 'user_id': user.pk,
+                                 'username': user.username,
+                                 'email': user.email})
+
+
+"""
+This view handles logout
+"""
+class LogoutView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        request.auth.delete()
+        return Response({'message': 'Logout erfolgreich'}, status=status.HTTP_200_OK)
+
+
 """
 This view handles registering a new user
 """
-
-
-
-class LoginView(ObtainAuthToken):
-    def post(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data,
-                                           context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data['user']
-        token, created = Token.objects.get_or_create(user=user)
-        return Response({
-            'token': token.key,
-            'user_id': user.pk,
-            'email': user.email
-        })  
-
-
 class RegistrationView(generics.CreateAPIView):
     serializer_class = UserSerializer
 
@@ -71,7 +92,9 @@ class RegistrationView(generics.CreateAPIView):
 
         return Response({'success': 'Account created. Please check your email to activate your account.'}, status=status.HTTP_201_CREATED)
     
-
+"""
+This view handles activating a new user
+"""
 class ActivationView(View):
     def get(self, request, uidb64, token):
         User = get_user_model()
@@ -90,7 +113,9 @@ class ActivationView(View):
             # Redirect to a failure page or whatever you need
             return redirect(reverse('activation_failure'))
 
-
+"""
+This view handles is for the user in case of activation failure 
+"""
 class ActivationFailureView(TemplateView):
     template_name = 'activation_failure.html'
 
@@ -100,7 +125,9 @@ class ActivationFailureView(TemplateView):
 
         return context
 
-
+"""
+This view handles is for the user in case of activation success 
+"""
 class ActivationSuccessView(TemplateView):
     template_name = 'activation_success.html'
 
