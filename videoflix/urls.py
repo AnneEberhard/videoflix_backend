@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.conf import settings
 from django.urls import path, include
 from django.conf.urls.static import static
-from user.views import ActivationView, LoginView, RegistrationView, ActivationSuccessView, ActivationFailureView
+from user.views import ActivationView, LoginView, LogoutView, RegistrationView, ActivationSuccessView, ActivationFailureView
 from content.views import video_overview
 
 urlpatterns = [
@@ -26,6 +26,7 @@ urlpatterns = [
     path("__debug__/", include("debug_toolbar.urls")),
     path('register/', RegistrationView.as_view()),
     path('login/', LoginView.as_view(), name='login'),
+    path('logout/', LogoutView.as_view()),
     path('video/', video_overview),
     path('django-rq/', include('django_rq.urls')),
     path('activate/<uidb64>/<token>/', ActivationView.as_view(), name='activate'),
