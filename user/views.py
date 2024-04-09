@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.http import JsonResponse
 from django.shortcuts import render
 from rest_framework import generics, status
 from rest_framework.response import Response
@@ -21,6 +22,8 @@ from django.urls import reverse
 from django.views import View
 from django.contrib.auth import get_user_model
 from django.views.generic import TemplateView
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+
 
 
 
@@ -60,10 +63,10 @@ class LogoutView(APIView):
 
 
 """
-This view handles registering a new user
+This view handles registering a new user and sends out an email containing a unique link for activation
 """
 class RegistrationView(generics.CreateAPIView):
-    serializer_class = UserSerializer
+    #serializer_class = UserSerializer
 
     def post(self, request):
         email = request.data.get('email')
@@ -93,7 +96,7 @@ class RegistrationView(generics.CreateAPIView):
         return Response({'success': 'Account created. Please check your email to activate your account.'}, status=status.HTTP_201_CREATED)
     
 """
-This view handles activating a new user
+This view handles activating a new user after clicking on the unique link
 """
 class ActivationView(View):
     def get(self, request, uidb64, token):
@@ -107,14 +110,12 @@ class ActivationView(View):
         if user is not None and default_token_generator.check_token(user, token):
             user.is_active = True
             user.save()
-            # Redirect to a success page or whatever you need
             return redirect(reverse('activation_success'))
         else:
-            # Redirect to a failure page or whatever you need
             return redirect(reverse('activation_failure'))
 
 """
-This view handles is for the user in case of activation failure 
+This view is for the user in case of activation failure 
 """
 class ActivationFailureView(TemplateView):
     template_name = 'activation_failure.html'
@@ -126,7 +127,7 @@ class ActivationFailureView(TemplateView):
         return context
 
 """
-This view handles is for the user in case of activation success 
+This view is for the user in case of activation success 
 """
 class ActivationSuccessView(TemplateView):
     template_name = 'activation_success.html'
@@ -137,6 +138,59 @@ class ActivationSuccessView(TemplateView):
 
         return context
 
+
+"""
+This view checks if the email send from the frontend is existent in the user db and 
+sends an email containing an unique link including token and uidb for the frontend reset interface
+"""
+class ForgotView(APIView):
+    def post(self, request):
+        email = request.data.get('email')  
+
+        try:
+            user = get_user_model().objects.get(email=email)
+        except get_user_model().DoesNotExist:
+            return JsonResponse({'error': 'User does not exist'}, status=400)
+
+        token_generator = PasswordResetTokenGenerator()
+        uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+        token = token_generator.make_token(user)
+
+        reset_password_link = f"{settings.FRONTEND_URL}/reset?uidb64={uidb64}&token={token}/"
+
+        subject = 'Password Reset'
+        html_message = render_to_string('reset_password_email.html', {'reset_password_link': reset_password_link})
+        plain_message = strip_tags(html_message) 
+        from_email = 'noreply@videoflix.com'
+        to_email = [email]
+        
+        send_mail(subject, plain_message, from_email, to_email, html_message=html_message)
+        print(reset_password_link)
+
+        return JsonResponse({'success': 'Reset password link sent'}, status=200)
+    
+
+"""
+This view resets the password in the backend and sets the user on active
+"""
+class ResetView(APIView):
+    def post(self, request, uidb64, token):
+        new_password = request.data.get('password')
+
+        try:
+            uid = urlsafe_base64_decode(uidb64).decode()
+            user = get_user_model().objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, get_user_model().DoesNotExist):
+            return JsonResponse({'error': 'Invalid user or token'}, status=400)
+
+        if not PasswordResetTokenGenerator().check_token(user, token):
+            return JsonResponse({'error': 'Invalid token'}, status=400)
+
+        user.set_password(new_password)
+        user.is_active = True
+        user.save()
+
+        return JsonResponse({'success': 'Password successfully reset'}, status=200)
 
 
 
