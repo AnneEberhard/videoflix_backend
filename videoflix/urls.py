@@ -27,7 +27,7 @@ urlpatterns = [
     path('register/', RegistrationView.as_view()),
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view()),
-    path('video/', video_overview),
+    path('videos/', video_overview),
     path('django-rq/', include('django_rq.urls')),
     path('activate/<uidb64>/<token>/', ActivationView.as_view(), name='activate'),
     path('activation/success/', ActivationSuccessView.as_view(), name='activation_success'),

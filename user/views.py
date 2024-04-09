@@ -26,7 +26,6 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 
 
 
-
 """
 This view handles login
 """
