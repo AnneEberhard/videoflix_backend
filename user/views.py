@@ -23,6 +23,7 @@ from django.views import View
 from django.contrib.auth import get_user_model
 from django.views.generic import TemplateView
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.core.cache import cache
 
 
 
@@ -58,6 +59,7 @@ class LogoutView(APIView):
 
     def post(self, request, format=None):
         request.auth.delete()
+        cache.delete('cache_page_videos_overview')
         return Response({'message': 'Logout erfolgreich'}, status=status.HTTP_200_OK)
 
 

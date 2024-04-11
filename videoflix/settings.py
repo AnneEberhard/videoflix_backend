@@ -38,6 +38,9 @@ CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:4200',
 ]
 
+CORS_ALLOWED_HEADERS = [
+    "cache-control", "pragma", "expires"
+]
 #new variable total lifetime for caching 60 sec * 15
 CACHE_TTL = 60 *15
 
