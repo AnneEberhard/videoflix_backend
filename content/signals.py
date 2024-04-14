@@ -9,6 +9,20 @@ from django.db.models.signals import post_save, post_delete
 def video_pos_save(sender, instance, created, **kwargs):
     print('Video')
     if created:
+        if instance.video_file and instance.thumbnail_file:
+            # Holen des Dateinamens und der Erweiterung der video_file
+            video_filename = os.path.basename(instance.video_file.name)
+            video_name, video_ext = os.path.splitext(video_filename)
+            # Neuen Dateinamen für das Thumbnail generieren
+            thumbnail_name = f"{video_name}_thumbnail{video_ext}"
+            # Pfad zum aktuellen Thumbnail und neuem Thumbnail konstruieren
+            current_thumbnail_path = instance.thumbnail_file.path
+            new_thumbnail_path = os.path.join(os.path.dirname(current_thumbnail_path), thumbnail_name)
+            # Thumbnail umbenennen
+            os.rename(current_thumbnail_path, new_thumbnail_path)
+            # Aktualisiere das Thumbnail-Filed im Model
+            instance.thumbnail_file.name = os.path.relpath(new_thumbnail_path, 'media')
+            instance.save(update_fields=['thumbnail_file'])
         print('new video created')
         queue = django_rq.get_queue('default', autocommit=True) #default ist die einzige Art, die in den settings definiert ist
         queue.enqueue(convert480p, instance.video_file.path) # ersetzt convert480p(instance.video_file.path)
@@ -36,3 +50,9 @@ def auto_delete_file_on_delete(sender, instance, **kkwargs):
         converted_file_path = f"{base_name}_720p.mp4"
         if os.path.isfile(converted_file_path):
             os.remove(converted_file_path)
+
+@receiver(post_delete, sender=Video)
+def delete_thumbnail_file(sender, instance, **kwargs):
+    if instance.thumbnail_file:
+        if os.path.isfile(instance.thumbnail_file.path):
+            os.remove(instance.thumbnail_file.path)

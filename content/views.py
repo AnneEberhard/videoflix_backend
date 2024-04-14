@@ -25,8 +25,8 @@ class CustomTokenAuthentication(TokenAuthentication):
 CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 
 @api_view(['GET'])
-@authentication_classes([CustomTokenAuthentication])
-@permission_classes([IsAuthenticated])
+#@authentication_classes([CustomTokenAuthentication])
+#@permission_classes([IsAuthenticated])
 @cache_page(CACHE_TTL)
 def video_overview(request):
     cache_key = 'cache_page_videos_overview'
@@ -37,9 +37,8 @@ def video_overview(request):
         serializer = VideoSerializer(uploaded_videos, many=True)
         cached_data = serializer.data
         cache.set(cache_key, cached_data, CACHE_TTL)
-    # uploaded_videos = Video.objects.all()
-    serializer = VideoSerializer(cached_data, many=True)
+    else:
+        serializer = VideoSerializer(cached_data, many=True)
 
+    return JsonResponse(serializer.data, safe=False)
 
-
-    return JsonResponse(serializer.data, safe=False)  
