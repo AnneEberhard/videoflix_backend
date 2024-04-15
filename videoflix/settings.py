@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     "debug_toolbar",
     "django_rq",
+    'import_export',
     'content.apps.ContentConfig',
     'user',
 ]
@@ -193,3 +194,6 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
 FRONTEND_URL = "localhost:4200"
 BACKEND_URL = "http://127.0.0.1:8000"
+
+
+IMPORT_EXPORT_USE_TRANSACTIONS = True
