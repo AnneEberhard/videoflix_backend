@@ -2,32 +2,60 @@ import os
 import django
 import json
 
+
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'videoflix.settings')
 
 django.setup()
 
+from datetime import datetime
 from django.http import HttpResponse
 from content.admin import VideoResource
+from user.admin import UserResource  
 
 
+def export_data(resource, model_name):
+    current_date = datetime.now().strftime("%Y-%m-%d")
+    filename = f"export_{model_name}_{current_date}.json"
 
-def download_json():
-    dataset = VideoResource().export()
+    folder_path = os.path.join("data")  
+    if not os.path.exists(folder_path):  
+        os.makedirs(folder_path)
+    file_path = os.path.join(folder_path, filename)  
+    print(file_path)
+
+    dataset = resource().export()
     json_data = dataset.json
 
     response = HttpResponse(json_data, content_type='application/json')
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
 
-    response['Content-Disposition'] = 'attachment; filename="export.json"'
-    # print(json_data)
     parsed = json.loads(json_data)
-    # print(json.dumps(parsed, indent=4))
-    text_file = open("Video.json", "w")
-    text_file.write(json.dumps(parsed, indent=4))
-    text_file.close()
+    with open(file_path, "w") as text_file:  
+        text_file.write(json.dumps(parsed, indent=4))
 
     return response
 
+video_export_response = export_data(VideoResource, "video")
+user_export_response = export_data(UserResource, "user")
 
-download_response = download_json()
-print(download_response)
+#def download_json():
+#    dataset = VideoResource().export()
+#   json_data = dataset.json
+#
+#   response = HttpResponse(json_data, content_type='application/json')
+#
+#   response['Content-Disposition'] = 'attachment; filename="export.json"'
+#   # print(json_data)
+#   parsed = json.loads(json_data)
+#   # print(json.dumps(parsed, indent=4))
+#   text_file = open("Video.json", "w")
+#   text_file.write(json.dumps(parsed, indent=4))
+#   text_file.close()
+#
+#   return response
+#
+#
+#download_response = download_json()
+#print(download_response)
 
