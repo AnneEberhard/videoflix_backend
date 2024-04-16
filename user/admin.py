@@ -1,9 +1,9 @@
 from django.contrib import admin
-from django.contrib.auth.models import User
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
-
-from user.models import CustomUser
+from django.contrib.auth.admin import UserAdmin
+from .models import CustomUser
+from .forms import CustomUserCreationForm
 
 
 class UserResource(resources.ModelResource):
@@ -11,12 +11,26 @@ class UserResource(resources.ModelResource):
     class Meta:
         model = CustomUser
 
-
-class UserAdmin(ImportExportModelAdmin):
+#@admin.register(CustomUser)
+class CustomUserAdmin(ImportExportModelAdmin):
+    add_form = CustomUserCreationForm
     resource_class = UserResource
     list_display = ('id', 'username', 'email')  
     search_fields = ('username', 'email')
+    fieldsets = (
+        *UserAdmin.fieldsets,
+        (
+            'Individual Data',
+            {
+                'fields': (
+                    'custom',
+                    'phone',
+                    'address',
+                )
+            }
+        )
+    )
 
-#admin.site.unregister(User)  
-admin.site.register(CustomUser, UserAdmin)  
+
+admin.site.register(CustomUser, CustomUserAdmin)  
 
