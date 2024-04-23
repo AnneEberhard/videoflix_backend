@@ -10,17 +10,12 @@ def video_pos_save(sender, instance, created, **kwargs):
     print('Video')
     if created:
         if instance.video_file and instance.thumbnail_file:
-            # Holen des Dateinamens und der Erweiterung der video_file
             video_filename = os.path.basename(instance.video_file.name)
             video_name, video_ext = os.path.splitext(video_filename)
-            # Neuen Dateinamen für das Thumbnail generieren
             thumbnail_name = f"{video_name}_thumbnail{video_ext}"
-            # Pfad zum aktuellen Thumbnail und neuem Thumbnail konstruieren
             current_thumbnail_path = instance.thumbnail_file.path
             new_thumbnail_path = os.path.join(os.path.dirname(current_thumbnail_path), thumbnail_name)
-            # Thumbnail umbenennen
             os.rename(current_thumbnail_path, new_thumbnail_path)
-            # Aktualisiere das Thumbnail-Filed im Model
             instance.thumbnail_file.name = os.path.relpath(new_thumbnail_path, 'media')
             instance.save(update_fields=['thumbnail_file'])
         print('new video created')

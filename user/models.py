@@ -1,7 +1,7 @@
-from django import apps
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+
    
 class UserManager(BaseUserManager):
     use_in_migration = True
@@ -27,6 +27,7 @@ class UserManager(BaseUserManager):
         extra_fields.setdefault('is_staff', False)
         extra_fields.setdefault('is_superuser', False)
         extra_fields.setdefault('is_active', False) 
+        
         return self._create_user(email, password, **extra_fields)
 
     def create_superuser(self, email, password=None, **extra_fields):
@@ -53,6 +54,11 @@ class CustomUser(AbstractUser):
 
     objects = UserManager()
     
+
+
+
+
+
 
     #the following code is needed because of clashes between 'user.CustomUser.user_permissions' and 'auth.User.user_permissions'
     # as well as 'user.CustomUser.groups' with reverse accessor for 'auth.User.groups'.

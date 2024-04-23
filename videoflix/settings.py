@@ -200,7 +200,3 @@ IMPORT_EXPORT_USE_TRANSACTIONS = True
 
 AUTH_USER_MODEL = 'user.CustomUser'
 
-#AUTHENTICATION_BACKENDS = [
-#    'videoflix.auth_backends.CustomAuthBackend',
-#    'django.contrib.auth.backends.ModelBackend',
-#]
