@@ -34,11 +34,15 @@ def video_overview(request):
 
     if not cached_data:
         uploaded_videos = Video.objects.all()
+        print('non-cache')
+        print(uploaded_videos)
         serializer = VideoSerializer(uploaded_videos, many=True, context={'request': request})
         cached_data = serializer.data
         cache.set(cache_key, cached_data, CACHE_TTL)
     else:
-        serializer = VideoSerializer(cached_data, many=True, context={'request': request})
+        print('cache')
+        print(cached_data)
+        # Cave cached_data cannot be serialized!
 
-    return JsonResponse(serializer.data, safe=False)
+    return JsonResponse(cached_data, safe=False)
 
