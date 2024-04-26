@@ -12,26 +12,38 @@ def video_pos_save(sender, instance, created, **kwargs):
     """
     renames thumbnail pic with same identifier als video_file
     """
-    if created:
-        if instance.video_file and instance.thumbnail_file:
-            video_filename = os.path.basename(instance.video_file.name)
-            video_name, video_ext = os.path.splitext(video_filename)
-            thumbnail_name = f"{video_name}_thumbnail.jpg"
-            current_thumbnail_path = instance.thumbnail_file.path
-            new_thumbnail_path = os.path.join(os.path.dirname(current_thumbnail_path), thumbnail_name)
-            os.rename(current_thumbnail_path, new_thumbnail_path)
-            instance.thumbnail_file.name = os.path.relpath(new_thumbnail_path, 'media')
-            instance.save(update_fields=['thumbnail_file'])
-        
-        queue = django_rq.get_queue('default', autocommit=True) #default ist die einzige Art, die in den settings definiert ist
-        queue.enqueue(convert480p, instance.video_file.path) # ersetzt convert480p(instance.video_file.path)
-        queue.enqueue(convert720p, instance.video_file.path) #convert720p(instance.video_file.path)
+    if not hasattr(instance, '_performing_post_save'):
+        instance._performing_post_save = False
+
+    if not instance._performing_post_save:
+        instance._performing_post_save = True  
+
+        if created or instance.thumbnail_file != instance._original_thumbnail_file:
+            if instance.video_file and instance.thumbnail_file:
+                video_filename = os.path.basename(instance.video_file.name)
+                video_name, video_ext = os.path.splitext(video_filename)
+                thumbnail_name = f"{video_name}_thumbnail.jpg"
+                current_thumbnail_path = instance.thumbnail_file.path
+                new_thumbnail_path = os.path.join(os.path.dirname(current_thumbnail_path), thumbnail_name)
+                os.rename(current_thumbnail_path, new_thumbnail_path)
+                instance.thumbnail_file.name = os.path.relpath(new_thumbnail_path, 'media')
+                instance.save(update_fields=['thumbnail_file'])
+
+        if created:    
+            queue = django_rq.get_queue('default', autocommit=True)
+            queue.enqueue(convert480p, instance.video_file.path)
+            queue.enqueue(convert720p, instance.video_file.path)
+
+        instance._performing_post_save = False  # Zurücksetzen des Flags
+ 
+
 
 @receiver(pre_save, sender=Video)
 def update_thumbnail(sender, instance, **kwargs):
     """
     checks pre save if thumbnail exists and deletes old file if changed
     """
+    print("Entering pre_save signal")
     if instance.pk:  
         try:
             old_instance = Video.objects.get(pk=instance.pk)
@@ -49,24 +61,24 @@ def store_original_thumbnail(sender, instance, **kwargs):
     """
     instance._original_thumbnail_file = instance.thumbnail_file
 
-@receiver(post_save, sender=Video)
-def save_thumbnail(sender, instance, created, **kwargs):
-    """
-    Renames and saves edited thumbnail
-    """
-    if instance.thumbnail_file != instance._original_thumbnail_file:
-        if instance.thumbnail_file:
-            video_filename = os.path.basename(instance.video_file.name)
-            video_name, _ = os.path.splitext(video_filename)
-            thumbnail_name = f"{video_name}_thumbnail.jpg"
-            new_thumbnail_path = os.path.join(settings.MEDIA_ROOT, 'thumbnails', thumbnail_name)
-
-            with open(instance.thumbnail_file.path, 'rb') as new_thumbnail:
-                with open(new_thumbnail_path, 'wb') as new_thumbnail_file:
-                    new_thumbnail_file.write(new_thumbnail.read())
-
-            instance.thumbnail_file.name = os.path.relpath(new_thumbnail_path, settings.MEDIA_ROOT)
-            instance.save(update_fields=['thumbnail_file'])
+#@receiver(post_save, sender=Video)
+#def save_thumbnail(sender, instance, created, **kwargs):
+#    """
+#    Renames and saves edited thumbnail
+#    """
+#    if not created and instance.thumbnail_file != instance._original_thumbnail_file:
+#        if instance.thumbnail_file:
+#            video_filename = os.path.basename(instance.video_file.name)
+#            video_name, _ = os.path.splitext(video_filename)
+#            thumbnail_name = f"{video_name}_thumbnail.jpg"
+#            new_thumbnail_path = os.path.join(settings.MEDIA_ROOT, 'thumbnails', thumbnail_name)
+#
+#            with open(instance.thumbnail_file.path, 'rb') as new_thumbnail:
+#                with open(new_thumbnail_path, 'wb') as new_thumbnail_file:
+#                    new_thumbnail_file.write(new_thumbnail.read())
+#
+#            instance.thumbnail_file.name = os.path.relpath(new_thumbnail_path, settings.MEDIA_ROOT)
+#            instance.save(update_fields=['thumbnail_file'])
 
 
 @receiver(post_delete, sender=Video)
