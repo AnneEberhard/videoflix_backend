@@ -9,6 +9,9 @@ from django.core.files import File
 
 @receiver(post_save, sender=Video)
 def video_pos_save(sender, instance, created, **kwargs):
+    """
+    renames thumbnail pic with same identifier als video_file
+    """
     if created:
         if instance.video_file and instance.thumbnail_file:
             video_filename = os.path.basename(instance.video_file.name)
@@ -26,11 +29,13 @@ def video_pos_save(sender, instance, created, **kwargs):
 
 @receiver(pre_save, sender=Video)
 def update_thumbnail(sender, instance, **kwargs):
-    if instance.pk:  # Prüfen, ob es sich um ein vorhandenes Objekt handelt
+    """
+    checks pre save if thumbnail exists and deletes old file if changed
+    """
+    if instance.pk:  
         try:
             old_instance = Video.objects.get(pk=instance.pk)
             if old_instance.thumbnail_file != instance.thumbnail_file:
-                # Wenn das Thumbnail geändert wurde, entferne die alte Datei
                 if old_instance.thumbnail_file:
                     if os.path.exists(old_instance.thumbnail_file.path):
                         os.remove(old_instance.thumbnail_file.path)
@@ -39,13 +44,17 @@ def update_thumbnail(sender, instance, **kwargs):
 
 @receiver(post_init, sender=Video)
 def store_original_thumbnail(sender, instance, **kwargs):
+    """
+    Creates copy of the thumbnail_file to check whether updated later on
+    """
     instance._original_thumbnail_file = instance.thumbnail_file
 
 @receiver(post_save, sender=Video)
 def save_thumbnail(sender, instance, created, **kwargs):
-    if created or instance.thumbnail_file != instance._original_thumbnail_file:
-        # Wenn das Objekt neu erstellt wird oder das Thumbnail geändert wurde,
-        # speichere das neue Thumbnail
+    """
+    Renames and saves edited thumbnail
+    """
+    if instance.thumbnail_file != instance._original_thumbnail_file:
         if instance.thumbnail_file:
             video_filename = os.path.basename(instance.video_file.name)
             video_name, _ = os.path.splitext(video_filename)
