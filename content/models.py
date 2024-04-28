@@ -2,6 +2,9 @@ from datetime import date
 from django.db import models
 
 class Video(models.Model):
+    """
+    The main model for videos
+    """
     GENRE_CHOICES = [
         ('Dystopia', 'Dystopia'),
         ('Fantasy', 'Fantasy'),

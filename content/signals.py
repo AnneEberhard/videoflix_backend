@@ -10,7 +10,14 @@ from django.core.files import File
 @receiver(post_save, sender=Video)
 def video_pos_save(sender, instance, created, **kwargs):
     """
-    renames thumbnail pic with same identifier als video_file
+    A signal handler function for renaming thumbnail with same identifier als video_file
+    :param sender: The sender of the signal.
+    :type sender: Any
+    :param instance: The instance being saved.
+    :type instance: Any
+    :param created: Indicates whether the instance was created (True) or updated (False).
+    :type created: bool
+    :param kwargs: Additional keyword arguments.
     """
     if not hasattr(instance, '_performing_post_save'):
         instance._performing_post_save = False
@@ -41,7 +48,12 @@ def video_pos_save(sender, instance, created, **kwargs):
 @receiver(pre_save, sender=Video)
 def update_thumbnail(sender, instance, **kwargs):
     """
-    checks pre save if thumbnail exists and deletes old file if changed
+    A signal handler function for checking pre save if thumbnail exists and deletes old file if changed
+    :param sender: The sender of the signal.
+    :type sender: Any
+    :param instance: The instance being saved.
+    :type instance: Any
+    :param kwargs: Additional keyword arguments
     """
     print("Entering pre_save signal")
     if instance.pk:  
@@ -57,35 +69,27 @@ def update_thumbnail(sender, instance, **kwargs):
 @receiver(post_init, sender=Video)
 def store_original_thumbnail(sender, instance, **kwargs):
     """
-    Creates copy of the thumbnail_file to check whether updated later on
+    A signal handler function for creating copy of the thumbnail_file to check whether updated later on
+    :param sender: The sender of the signal.
+    :type sender: Any
+    :param instance: The instance being saved.
+    :type instance: Any
+    :param kwargs: Additional keyword arguments
     """
     instance._original_thumbnail_file = instance.thumbnail_file
 
-#@receiver(post_save, sender=Video)
-#def save_thumbnail(sender, instance, created, **kwargs):
-#    """
-#    Renames and saves edited thumbnail
-#    """
-#    if not created and instance.thumbnail_file != instance._original_thumbnail_file:
-#        if instance.thumbnail_file:
-#            video_filename = os.path.basename(instance.video_file.name)
-#            video_name, _ = os.path.splitext(video_filename)
-#            thumbnail_name = f"{video_name}_thumbnail.jpg"
-#            new_thumbnail_path = os.path.join(settings.MEDIA_ROOT, 'thumbnails', thumbnail_name)
-#
-#            with open(instance.thumbnail_file.path, 'rb') as new_thumbnail:
-#                with open(new_thumbnail_path, 'wb') as new_thumbnail_file:
-#                    new_thumbnail_file.write(new_thumbnail.read())
-#
-#            instance.thumbnail_file.name = os.path.relpath(new_thumbnail_path, settings.MEDIA_ROOT)
-#            instance.save(update_fields=['thumbnail_file'])
 
 
 @receiver(post_delete, sender=Video)
 def auto_delete_file_on_delete(sender, instance, **kkwargs):
     """
-    Deletes video file from filesystem
-    when corresponing 'Video' onject is deleted
+    A signal handler function for deleting video file from filesystem
+    when corresponding 'Video' onject is deleted
+    :param sender: The sender of the signal.
+    :type sender: Any
+    :param instance: The instance being saved.
+    :type instance: Any
+    :param kwargs: Additional keyword arguments
     """
     if instance.video_file:
         if os.path.isfile(instance.video_file.path):
@@ -103,11 +107,17 @@ def auto_delete_file_on_delete(sender, instance, **kkwargs):
         if os.path.isfile(converted_file_path):
             os.remove(converted_file_path)
 
+
 @receiver(post_delete, sender=Video)
 def delete_thumbnail_file(sender, instance, **kwargs):
     """
-    Deletes thumbnail file from filesystem
+    A signal handler function for deleting thumbnail file from filesystem
     when corresponing 'Video' onject is deleted
+    :param sender: The sender of the signal.
+    :type sender: Any
+    :param instance: The instance being saved.
+    :type instance: Any
+    :param kwargs: Additional keyword arguments
     """
     if instance.thumbnail_file:
         if os.path.isfile(instance.thumbnail_file.path):

@@ -12,6 +12,20 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 from django.core.cache import cache
 
 class CustomTokenAuthentication(TokenAuthentication):
+    """
+    Custom token-based authentication class.
+
+    This class extends the TokenAuthentication class provided by Django REST Framework to ensure logged-in status.
+    It overrides the `authenticate_credentials` method to handle the authentication process and ignores the 'Bearer'
+    prefix if present in the authentication token.
+
+    Attributes:
+    - keyword: The keyword used to identify the token type in the authentication header.
+               Default is 'Bearer'.
+
+    Methods:
+    - authenticate_credentials: Authenticates the provided token credentials.
+    """
     keyword = 'Bearer'
 
     def authenticate_credentials(self, key):
@@ -21,14 +35,24 @@ class CustomTokenAuthentication(TokenAuthentication):
 
         return super().authenticate_credentials(key)
 
+
 # is defined in the settings
 CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 
 @api_view(['GET'])
-#@authentication_classes([CustomTokenAuthentication])
-#@permission_classes([IsAuthenticated])
+@authentication_classes([CustomTokenAuthentication])
+@permission_classes([IsAuthenticated])
 @cache_page(CACHE_TTL)
 def video_overview(request):
+    """
+    Returns video data for uploaded videos.
+
+    This view function returns data for uploaded videos. If cached data exists, it returns the cached data
+    to improve performance.
+
+    Endpoints:
+    - GET /video_overview: Returns video data.
+    """
     cache_key = 'cache_page_videos_overview'
     cached_data = cache.get(cache_key)
 
@@ -42,7 +66,7 @@ def video_overview(request):
     else:
         print('cache')
         print(cached_data)
-        # Cave cached_data cannot be serialized!
+        # Beware: Cave cached_data cannot be serialized twice!
 
     return JsonResponse(cached_data, safe=False)
 

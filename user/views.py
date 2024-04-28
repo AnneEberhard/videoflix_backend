@@ -27,10 +27,12 @@ from django.core.cache import cache
 
 
 
-"""
-This view handles login
-"""
 class LoginView(ObtainAuthToken):
+    """
+    This view handles user login and token generation.
+    Endpoints:
+    - POST /login: Logs in the user and generates a token.
+    """
     serializer_class = LoginViewSerializer
 
     def post(self, request, *args, **kwargs):
@@ -50,10 +52,13 @@ class LoginView(ObtainAuthToken):
                                  'email': user.email})
 
 
-"""
-This view handles logout
-"""
+
 class LogoutView(APIView):
+    """
+    This view handles user logout.
+    Endpoints:
+    - POST /logout: Logs out the user and deletes the authentication token.
+    """
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
@@ -63,12 +68,13 @@ class LogoutView(APIView):
         return Response({'message': 'Logout erfolgreich'}, status=status.HTTP_200_OK)
 
 
-"""
-This view handles registering a new user and sends out an email containing a unique link for activation
-"""
-class RegistrationView(generics.CreateAPIView):
-    #serializer_class = UserSerializer
 
+class RegistrationView(generics.CreateAPIView):
+    """
+    This view handles user registration and sends an activation email.
+    Endpoints:
+    - POST /register: Registers a new user and sends an activation email.
+    """
     def post(self, request):
         email = request.data.get('email')
         username = request.data.get('username')
@@ -96,10 +102,13 @@ class RegistrationView(generics.CreateAPIView):
 
         return Response({'success': 'Account created. Please check your email to activate your account.'}, status=status.HTTP_201_CREATED)
     
-"""
-This view handles activating a new user after clicking on the unique link
-"""
+
 class ActivationView(View):
+    """
+    This view handles user activation after clicking on the activation link.
+    Endpoints:
+    - GET /activate/<uidb64>/<token>/: Activates a user account.
+    """
     def get(self, request, uidb64, token):
         User = get_user_model()
         try:
@@ -115,10 +124,11 @@ class ActivationView(View):
         else:
             return redirect(reverse('activation_failure'))
 
-"""
-This view is for the user in case of activation failure 
-"""
+
 class ActivationFailureView(TemplateView):
+    """
+    This view is displayed when user activation fails.
+    """
     template_name = 'activation_failure.html'
 
     def get_context_data(self, **kwargs):
@@ -127,10 +137,11 @@ class ActivationFailureView(TemplateView):
 
         return context
 
-"""
-This view is for the user in case of activation success 
-"""
+
 class ActivationSuccessView(TemplateView):
+    """
+    This view is displayed when user activation is successful.
+    """
     template_name = 'activation_success.html'
 
     def get_context_data(self, **kwargs):
@@ -140,11 +151,13 @@ class ActivationSuccessView(TemplateView):
         return context
 
 
-"""
-This view checks if the email send from the frontend is existent in the user db and 
-sends an email containing an unique link including token and uidb for the frontend reset interface
-"""
+
 class ForgotView(APIView):
+    """
+    This view handles the request for resetting the user's password and sends a reset password link via email.
+    Endpoints:
+    - POST /forgot: Sends a password reset link to the user's email.
+    """
     def post(self, request):
         email = request.data.get('email')  
 
@@ -171,10 +184,12 @@ class ForgotView(APIView):
         return JsonResponse({'success': 'Reset password link sent'}, status=200)
     
 
-"""
-This view resets the password in the backend and sets the user on active
-"""
 class ResetView(APIView):
+    """
+    This view handles password reset after clicking on the reset password link.
+    Endpoints:
+    - POST /reset/<uidb64>/<token>/: Resets the user's password.
+    """
     def post(self, request, uidb64, token):
         new_password = request.data.get('password')
 
@@ -193,55 +208,3 @@ class ResetView(APIView):
 
         return JsonResponse({'success': 'Password successfully reset'}, status=200)
 
-
-
-
-#lass RegistrationView2(generics.CreateAPIView):
-#   serializer_class = UserSerializer 
-#
-#   def post(self, request, *args, **kwargs):
-#       email = request.data.get('email')
-#       if User.objects.filter(email=email).exists():
-#           return Response({'error': 'Email already exists'}, status=status.HTTP_400_BAD_REQUEST)
-#
-#       user_serializer = self.get_serializer(data=request.data)
-#       user_serializer.is_valid(raise_exception=True)
-#       user = user_serializer.save()
-#
-#       token_generator = default_token_generator
-#       uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
-#       token = token_generator.make_token(user)
-#
-#       activation_link = f"http://127.0.0.1:5500/activate/?uidb64={uidb64}&token={token}"
-#       #activation_link = f"https://yourdomain.com/activate/?uidb64={uidb64}&token={token}"
-#
-#       subject = 'Account Activation'
-#       html_message = render_to_string('activation_email.html', {'activation_link': activation_link})
-#       plain_message = strip_tags(html_message)  # Strip HTML tags for plain text email
-#       from_email = 'noreply@videoflix.com'
-#       to_email = [email]
-#
-#       send_mail(subject, plain_message, from_email, to_email, html_message=html_message)
-#
-#       return Response({'success': 'Account created. Please check your email to activate your account.'}, status=status.HTTP_201_CREATED)
-#
-   
-#
-#class ActivationView(View):
-#    def get(self, request, uidb64, token):
-#        User = get_user_model()
-#        try:
-#            uid = urlsafe_base64_decode(uidb64).decode()
-#            user = User.objects.get(pk=uid)
-#        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-#            user = None
-#
-#        if user is not None and default_token_generator.check_token(user, token):
-#            user.is_active = True
-#            user.save()
-#            # Redirect to a success page or whatever you need
-#            return redirect(reverse('activation_success'))
-#        else:
-#            # Redirect to a failure page or whatever you need
-#            return redirect(reverse('activation_failure'))
-        

@@ -4,10 +4,20 @@ from user.models import CustomUser
 from django.contrib.auth import get_user_model
 
 
-"""
-This serializer handles the user and assures a correct password is created
-"""
+
 class UserSerializer(serializers.ModelSerializer):
+    """
+    Serializer for handling user data and ensuring correct password creation.
+
+    This serializer is responsible for handling user data and ensuring that a correct password is created.
+    It excludes the 'first_name' and 'last_name' fields from the serialization process and marks the 'password'
+    field as write-only.
+
+    Methods:
+    - create: Creates a new user with the provided validated data.
+    - update: Updates an existing user instance with the provided validated data, including password handling.
+
+    """
     class Meta:
         model = CustomUser
         exclude = ['first_name', 'last_name']
@@ -27,11 +37,20 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 
-"""
-This serializer handles the authtokens and is needed for the creation of a token for login
-Serializer is called in LogInView: serializer = self.get_serializer(data=request.data)
-"""
+
 class LoginViewSerializer(serializers.Serializer):
+    """
+    Serializer for handling authentication tokens required for login.
+
+    This serializer is responsible for handling authentication tokens and is needed for the creation
+    of a token for login. It includes fields for email and password. The email field is of type EmailField,
+    while the password field is of type CharField with the input type set to 'password' for secure entry.
+    Serializer is called in LogInView: serializer = self.get_serializer(data=request.data)
+    
+    Methods:
+    - validate: Validates the email and password fields and returns the user instance if authentication is successful.
+    
+    """
     email = serializers.EmailField()
     password = serializers.CharField(
         style={'input_type': 'password'},
