@@ -24,14 +24,14 @@ from content.views import video_overview
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("__debug__/", include("debug_toolbar.urls")),
-    path('register/', RegistrationView.as_view()),
+    path('register/', RegistrationView.as_view(), name='register'),
     path('login/', LoginView.as_view(), name='login'),
-    path('logout/', LogoutView.as_view()),
-    path('videos/', video_overview),
+    path('logout/', LogoutView.as_view(), name='logout'),
+    path('videos/', video_overview, name='videos'),
     path('django-rq/', include('django_rq.urls')),
     path('activate/<uidb64>/<token>/', ActivationView.as_view(), name='activate'),
     path('activation/success/', ActivationSuccessView.as_view(), name='activation_success'),
     path('activation/failure/', ActivationFailureView.as_view(), name='activation_failure'),
-    path('forgot/', ForgotView.as_view()),
+    path('forgot/', ForgotView.as_view(), name ='forgot'),
     path('reset/<uidb64>/<token>/', ResetView.as_view(), name='password_reset_confirm'),
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

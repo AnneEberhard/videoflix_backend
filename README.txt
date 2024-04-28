@@ -11,3 +11,6 @@ python manage.py shell
 >>> from django.core.cache import cache
 >>> cache.clear()
 >>> exit()
+
+
+Documentation RST (ReStructured Text)

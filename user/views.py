@@ -25,50 +25,6 @@ from django.views.generic import TemplateView
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.cache import cache
 
-
-
-class LoginView(ObtainAuthToken):
-    """
-    This view handles user login and token generation.
-    Endpoints:
-    - POST /login: Logs in the user and generates a token.
-    """
-    serializer_class = LoginViewSerializer
-
-    def post(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data, context={'request': request})
-        serializer.is_valid(raise_exception=True)
-
-        user = serializer.validated_data['user']
-
-        if not user.is_active:
-            return Response({'error': 'Account not activated'}, status=status.HTTP_400_BAD_REQUEST)
-        
-        token, created = Token.objects.get_or_create(user=user)
-
-        return Response({'token': token.key,
-                                 'user_id': user.pk,
-                                 'username': user.username,
-                                 'email': user.email})
-
-
-
-class LogoutView(APIView):
-    """
-    This view handles user logout.
-    Endpoints:
-    - POST /logout: Logs out the user and deletes the authentication token.
-    """
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request, format=None):
-        request.auth.delete()
-        cache.delete('cache_page_videos_overview')
-        return Response({'message': 'Logout erfolgreich'}, status=status.HTTP_200_OK)
-
-
-
 class RegistrationView(generics.CreateAPIView):
     """
     This view handles user registration and sends an activation email.
@@ -149,6 +105,50 @@ class ActivationSuccessView(TemplateView):
         context['frontend_url'] = settings.FRONTEND_URL
 
         return context
+
+
+class LoginView(ObtainAuthToken):
+    """
+    This view handles user login and token generation.
+    Endpoints:
+    - POST /login: Logs in the user and generates a token.
+    """
+    serializer_class = LoginViewSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+
+        user = serializer.validated_data['user']
+
+        if not user.is_active:
+            return Response({'error': 'Account not activated'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        token, created = Token.objects.get_or_create(user=user)
+
+        return Response({'token': token.key,
+                                 'user_id': user.pk,
+                                 'username': user.username,
+                                 'email': user.email})
+
+
+
+class LogoutView(APIView):
+    """
+    This view handles user logout.
+    Endpoints:
+    - POST /logout: Logs out the user and deletes the authentication token.
+    """
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        request.auth.delete()
+        cache.delete('cache_page_videos_overview')
+        return Response({'message': 'Logout erfolgreich'}, status=status.HTTP_200_OK)
+
+
+
 
 
 
