@@ -70,9 +70,9 @@ class ActivationView(View):
         try:
             uid = urlsafe_base64_decode(uidb64).decode()
             user = User.objects.get(pk=uid)
-        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist) as e:
             user = None
-
+            
         if user is not None and default_token_generator.check_token(user, token):
             user.is_active = True
             user.save()
@@ -149,9 +149,6 @@ class LogoutView(APIView):
 
 
 
-
-
-
 class ForgotView(APIView):
     """
     This view handles the request for resetting the user's password and sends a reset password link via email.
@@ -196,7 +193,7 @@ class ResetView(APIView):
         try:
             uid = urlsafe_base64_decode(uidb64).decode()
             user = get_user_model().objects.get(pk=uid)
-        except (TypeError, ValueError, OverflowError, get_user_model().DoesNotExist):
+        except (TypeError, ValueError, OverflowError, get_user_model().DoesNotExist) as e:
             return JsonResponse({'error': 'Invalid user or token'}, status=400)
 
         if not PasswordResetTokenGenerator().check_token(user, token):
