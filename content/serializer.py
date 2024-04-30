@@ -48,13 +48,3 @@ class VideoSerializer(serializers.ModelSerializer):
         """
         return self.get_file_url(obj, 'video_file')
     
-
-#   def get_thumbnail_file_url(self, obj):
-#       if obj.thumbnail_file:
-#           return self.context['request'].build_absolute_uri(obj.thumbnail_file.url)
-#       return None
-#
-#   def get_video_file_url(self, obj):
-#       if obj.video_file:
-#           return self.context['request'].build_absolute_uri(obj.video_file.url)
-#       return None
