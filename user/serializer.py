@@ -1,8 +1,6 @@
 from rest_framework import serializers
-from django.contrib.auth.models import User
 from user.models import CustomUser
 from django.contrib.auth import get_user_model
-
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -22,10 +20,10 @@ class UserSerializer(serializers.ModelSerializer):
         model = CustomUser
         exclude = ['first_name', 'last_name']
         extra_kwargs = {'password': {'write_only': True}}
-    
-    def create (self, validated_data):
+
+    def create(self, validated_data):
         return CustomUser.objects.create_user(**validated_data)
-    
+
     def update(self, instance, validated_data):
         password = validated_data.pop('password', None)
         user = super().update(instance, validated_data)
@@ -33,9 +31,8 @@ class UserSerializer(serializers.ModelSerializer):
         if password:
             user.set_password(password)
             user.save()
-        
-        return user
 
+        return user
 
 
 class LoginViewSerializer(serializers.Serializer):
@@ -46,10 +43,9 @@ class LoginViewSerializer(serializers.Serializer):
     of a token for login. It includes fields for email and password. The email field is of type EmailField,
     while the password field is of type CharField with the input type set to 'password' for secure entry.
     Serializer is called in LogInView: serializer = self.get_serializer(data=request.data)
-    
+
     Methods:
     - validate: Validates the email and password fields and returns the user instance if authentication is successful.
-    
     """
     email = serializers.EmailField()
     password = serializers.CharField(

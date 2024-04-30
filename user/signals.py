@@ -1,10 +1,10 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.contrib.auth.models import User
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from content.models import Video
-from .models import CustomUser  
+from .models import CustomUser
+
 
 @receiver(post_save, sender=CustomUser)
 def set_staff_permissions(sender, instance, **kwargs):
@@ -32,7 +32,6 @@ def set_staff_permissions(sender, instance, **kwargs):
     :type instance: CustomUser
     :param kwargs: Additional keyword arguments.
     """
-    
     if instance.is_staff:
         model_permissions = [
             ('add_video', 'Can add video', Video),

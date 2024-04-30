@@ -1,11 +1,10 @@
 import os
-from django.conf import settings
 import django_rq
 from .tasks import convert480p, convert720p
 from .models import Video
 from django.dispatch import receiver
 from django.db.models.signals import post_save, post_delete, pre_save, post_init
-from django.core.files import File
+
 
 @receiver(post_save, sender=Video)
 def video_pos_save(sender, instance, created, **kwargs):
@@ -23,7 +22,7 @@ def video_pos_save(sender, instance, created, **kwargs):
         instance._performing_post_save = False
 
     if not instance._performing_post_save:
-        instance._performing_post_save = True  
+        instance._performing_post_save = True
 
         if created or instance.thumbnail_file != instance._original_thumbnail_file:
             if instance.video_file and instance.thumbnail_file:
@@ -36,13 +35,12 @@ def video_pos_save(sender, instance, created, **kwargs):
                 instance.thumbnail_file.name = os.path.relpath(new_thumbnail_path, 'media')
                 instance.save(update_fields=['thumbnail_file'])
 
-        if created:    
+        if created:
             queue = django_rq.get_queue('default', autocommit=True)
             queue.enqueue(convert480p, instance.video_file.path)
             queue.enqueue(convert720p, instance.video_file.path)
 
-        instance._performing_post_save = False  # Zurücksetzen des Flags
- 
+        instance._performing_post_save = False
 
 
 @receiver(pre_save, sender=Video)
@@ -56,7 +54,7 @@ def update_thumbnail(sender, instance, **kwargs):
     :param kwargs: Additional keyword arguments
     """
     print("Entering pre_save signal")
-    if instance.pk:  
+    if instance.pk:
         try:
             old_instance = Video.objects.get(pk=instance.pk)
             if old_instance.thumbnail_file != instance.thumbnail_file:
@@ -65,6 +63,7 @@ def update_thumbnail(sender, instance, **kwargs):
                         os.remove(old_instance.thumbnail_file.path)
         except Video.DoesNotExist:
             pass
+
 
 @receiver(post_init, sender=Video)
 def store_original_thumbnail(sender, instance, **kwargs):
@@ -77,7 +76,6 @@ def store_original_thumbnail(sender, instance, **kwargs):
     :param kwargs: Additional keyword arguments
     """
     instance._original_thumbnail_file = instance.thumbnail_file
-
 
 
 @receiver(post_delete, sender=Video)
@@ -94,7 +92,7 @@ def auto_delete_file_on_delete(sender, instance, **kkwargs):
     if instance.video_file:
         if os.path.isfile(instance.video_file.path):
             os.remove(instance.video_file.path)
-    
+
     if instance.video_file:
         base_name, ext = os.path.splitext(instance.video_file.path)
         converted_file_path = f"{base_name}_480p.mp4"

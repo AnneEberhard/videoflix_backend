@@ -12,12 +12,8 @@ class VideoResource(resources.ModelResource):
 
 class VideoAdmin(ImportExportModelAdmin):
     resource_classes = [VideoResource]
-    list_display = ('created_at','title','description')
-    search_fields = ('title',)
+    list_display = ('created_at', 'title', 'description')
+    search_fields = ('title', )
 
 
 admin.site.register(Video, VideoAdmin)
-
-
-    
-

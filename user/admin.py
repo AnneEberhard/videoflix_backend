@@ -11,11 +11,11 @@ class UserResource(resources.ModelResource):
     class Meta:
         model = CustomUser
 
-#@admin.register(CustomUser)
+
 class CustomUserAdmin(ImportExportModelAdmin):
     add_form = CustomUserCreationForm
     resource_class = UserResource
-    list_display = ('id', 'username', 'email')  
+    list_display = ('id', 'username', 'email')
     search_fields = ('username', 'email')
     fieldsets = (
         *UserAdmin.fieldsets,
@@ -32,5 +32,4 @@ class CustomUserAdmin(ImportExportModelAdmin):
     )
 
 
-admin.site.register(CustomUser, CustomUserAdmin)  
-
+admin.site.register(CustomUser, CustomUserAdmin)

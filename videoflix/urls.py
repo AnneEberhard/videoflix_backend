@@ -32,6 +32,6 @@ urlpatterns = [
     path('activate/<uidb64>/<token>/', ActivationView.as_view(), name='activate'),
     path('activation/success/', ActivationSuccessView.as_view(), name='activation_success'),
     path('activation/failure/', ActivationFailureView.as_view(), name='activation_failure'),
-    path('forgot/', ForgotView.as_view(), name ='forgot'),
+    path('forgot/', ForgotView.as_view(), name='forgot'),
     path('reset/<uidb64>/<token>/', ResetView.as_view(), name='password_reset_confirm'),
-]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

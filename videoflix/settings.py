@@ -14,10 +14,9 @@ import os
 from pathlib import Path
 
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'. 
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-#BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
+# BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 # Quick-start development settings - unsuitable for production
@@ -41,8 +40,8 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOWED_HEADERS = [
     "cache-control", "pragma", "expires"
 ]
-#new variable total lifetime for caching 60 sec * 15
-CACHE_TTL = 60 *15
+# new variable total lifetime for caching 60 sec * 15
+CACHE_TTL = 60 * 15
 
 # Application definition
 
@@ -102,7 +101,7 @@ RQ_QUEUES = {
 }
 
 
-#RQ_EXCEPTION_HANDLERS = ['path.to.my.handler'] # If you need custom exception handlers
+# RQ_EXCEPTION_HANDLERS = ['path.to.my.handler'] # If you need custom exception handlers
 
 ROOT_URLCONF = 'videoflix.urls'
 
@@ -199,4 +198,3 @@ BACKEND_URL = "http://127.0.0.1:8000"
 IMPORT_EXPORT_USE_TRANSACTIONS = True
 
 AUTH_USER_MODEL = 'user.CustomUser'
-

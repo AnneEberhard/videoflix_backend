@@ -1,15 +1,13 @@
 from django.conf import settings
 from django.http import JsonResponse
-from django.shortcuts import render
 from rest_framework import generics, status
 from rest_framework.response import Response
-from .serializer import LoginViewSerializer, UserSerializer
+from .serializer import LoginViewSerializer
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
@@ -24,6 +22,7 @@ from django.contrib.auth import get_user_model
 from django.views.generic import TemplateView
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.cache import cache
+
 
 class RegistrationView(generics.CreateAPIView):
     """
@@ -50,14 +49,14 @@ class RegistrationView(generics.CreateAPIView):
 
         subject = 'Account Activation'
         html_message = render_to_string('activation_email.html', {'activation_link': activation_link})
-        plain_message = strip_tags(html_message) 
+        plain_message = strip_tags(html_message)
         from_email = 'noreply@videoflix.com'
         to_email = [email]
         print(activation_link)
         send_mail(subject, plain_message, from_email, to_email, html_message=html_message)
 
         return Response({'success': 'Account created. Please check your email to activate your account.'}, status=status.HTTP_201_CREATED)
-    
+
 
 class ActivationView(View):
     """
@@ -70,9 +69,9 @@ class ActivationView(View):
         try:
             uid = urlsafe_base64_decode(uidb64).decode()
             user = User.objects.get(pk=uid)
-        except (TypeError, ValueError, OverflowError, User.DoesNotExist) as e:
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
             user = None
-            
+
         if user is not None and default_token_generator.check_token(user, token):
             user.is_active = True
             user.save()
@@ -123,14 +122,13 @@ class LoginView(ObtainAuthToken):
 
         if not user.is_active:
             return Response({'error': 'Account not activated'}, status=status.HTTP_400_BAD_REQUEST)
-        
+
         token, created = Token.objects.get_or_create(user=user)
 
         return Response({'token': token.key,
-                                 'user_id': user.pk,
-                                 'username': user.username,
-                                 'email': user.email})
-
+                         'user_id': user.pk,
+                         'username': user.username,
+                         'email': user.email})
 
 
 class LogoutView(APIView):
@@ -148,7 +146,6 @@ class LogoutView(APIView):
         return Response({'message': 'Logout erfolgreich'}, status=status.HTTP_200_OK)
 
 
-
 class ForgotView(APIView):
     """
     This view handles the request for resetting the user's password and sends a reset password link via email.
@@ -156,7 +153,7 @@ class ForgotView(APIView):
     - POST /forgot: Sends a password reset link to the user's email.
     """
     def post(self, request):
-        email = request.data.get('email')  
+        email = request.data.get('email')
 
         try:
             user = get_user_model().objects.get(email=email)
@@ -171,15 +168,15 @@ class ForgotView(APIView):
 
         subject = 'Password Reset'
         html_message = render_to_string('reset_password_email.html', {'reset_password_link': reset_password_link})
-        plain_message = strip_tags(html_message) 
+        plain_message = strip_tags(html_message)
         from_email = 'noreply@videoflix.com'
         to_email = [email]
-        
+
         send_mail(subject, plain_message, from_email, to_email, html_message=html_message)
         print(reset_password_link)
 
         return JsonResponse({'success': 'Reset password link sent'}, status=200)
-    
+
 
 class ResetView(APIView):
     """
@@ -193,7 +190,7 @@ class ResetView(APIView):
         try:
             uid = urlsafe_base64_decode(uidb64).decode()
             user = get_user_model().objects.get(pk=uid)
-        except (TypeError, ValueError, OverflowError, get_user_model().DoesNotExist) as e:
+        except (TypeError, ValueError, OverflowError, get_user_model().DoesNotExist):
             return JsonResponse({'error': 'Invalid user or token'}, status=400)
 
         if not PasswordResetTokenGenerator().check_token(user, token):
@@ -204,4 +201,3 @@ class ResetView(APIView):
         user.save()
 
         return JsonResponse({'success': 'Password successfully reset'}, status=200)
-

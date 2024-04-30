@@ -1,8 +1,6 @@
 from django.conf import settings
 from django.http import JsonResponse
-from django.shortcuts import render
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 from django.views.decorators.cache import cache_page
 from django.core.cache.backends.base import DEFAULT_TIMEOUT
@@ -10,6 +8,7 @@ from .serializer import VideoSerializer
 from .models import Video
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from django.core.cache import cache
+
 
 class CustomTokenAuthentication(TokenAuthentication):
     """
@@ -38,6 +37,7 @@ class CustomTokenAuthentication(TokenAuthentication):
 
 # is defined in the settings
 CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
+
 
 @api_view(['GET'])
 @authentication_classes([CustomTokenAuthentication])
@@ -69,4 +69,3 @@ def video_overview(request):
         # Beware: Cave cached_data cannot be serialized twice!
 
     return JsonResponse(cached_data, safe=False)
-

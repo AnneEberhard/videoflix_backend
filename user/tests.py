@@ -1,11 +1,11 @@
 from django.test import TestCase
-from rest_framework.test import APIClient, APITestCase
+from rest_framework.test import APIClient
 from rest_framework import status
 from django.core import mail
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator, PasswordResetTokenGenerator
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 
 
@@ -23,12 +23,11 @@ class RegistrationTestCase(TestCase):
         response = self.client.post(self.register_url, self.valid_payload, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertIn('success', response.data)
-        self.assertEqual(len(mail.outbox), 1)  # Check if an email is sent
+        self.assertEqual(len(mail.outbox), 1)
 
     def test_registration_existing_email(self):
-        # Create a user with the email used in valid payload
         User = get_user_model()
-        existing_user = User.objects.create_user(email=self.valid_payload['email'], username='existinguser', password='existingpassword')
+        User.objects.create_user(email=self.valid_payload['email'], username='existinguser', password='existingpassword')
         response = self.client.post(self.register_url, self.valid_payload, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('error', response.data)
@@ -71,8 +70,7 @@ class ActivationTestCase(TestCase):
         self.assertFalse(self.user.is_active)
 
     def test_activation_failure_invalid_user(self):
-        User = get_user_model()
-        uid = urlsafe_base64_encode((self.user.pk + 1).to_bytes(4, 'big'))  # Use an invalid user ID
+        uid = urlsafe_base64_encode((self.user.pk + 1).to_bytes(4, 'big'))
         response = self.client.get(reverse('activate', args=[uid, self.token]))
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, self.activation_failure_url)
@@ -103,7 +101,7 @@ class LoginViewTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('error', response.data)
         self.assertEqual(response.data['error'], 'Account not activated')
- 
+
     def test_login_invalid_credentials(self):
         data = {'email': 'test@example.com', 'password': 'wrongpassword'}
         response = self.client.post(self.login_url, data, format='json')
@@ -125,7 +123,7 @@ class ForgotViewTestCase(TestCase):
         response = self.client.post(self.forgot_url, valid_payload, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('success', response.json())
- 
+
     def test_forgot_password_invalid_email(self):
         response = self.client.post(self.forgot_url, self.invalid_payload, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -145,7 +143,7 @@ class ResetViewTestCase(TestCase):
         self.token = PasswordResetTokenGenerator().make_token(self.user)
         self.new_password = 'newpassword'
         self.data = {'password': self.new_password}
-        
+
     def test_reset_password_success(self):
         reset_url = reverse('password_reset_confirm', kwargs={'uidb64': self.uidb64, 'token': self.token})
         response = self.client.post(reset_url, self.data)
@@ -167,4 +165,3 @@ class ResetViewTestCase(TestCase):
         response = self.client.post(reset_url, self.data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('Invalid user or token', response.json()['error'])
-

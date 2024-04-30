@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Video
 
+
 class VideoSerializer(serializers.ModelSerializer):
     """
     Main serializer used when videos are called for from frontend
@@ -35,7 +36,7 @@ class VideoSerializer(serializers.ModelSerializer):
         :type obj: Any
         :return: The absolute URL of the thumbnail file, or None if the thumbnail file is not found or is empty.
         :rtype: str or None
-        """    
+        """
         return self.get_file_url(obj, 'thumbnail_file')
 
     def get_video_file_url(self, obj):
@@ -47,4 +48,3 @@ class VideoSerializer(serializers.ModelSerializer):
         :rtype: str or None
         """
         return self.get_file_url(obj, 'video_file')
-    
