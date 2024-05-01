@@ -19,7 +19,7 @@ from django.conf import settings
 from django.urls import path, include
 from django.conf.urls.static import static
 from user.views import ActivationView, ForgotView, LoginView, LogoutView, RegistrationView, ActivationSuccessView, ActivationFailureView, ResetView
-from content.views import video_overview
+from content.views import speedtest_file_view, video_overview
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
@@ -52,4 +52,5 @@ urlpatterns = [
     path('reset/<uidb64>/<token>/', ResetView.as_view(), name='password_reset_confirm'),
     path('api/swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('api/redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path('speedtest/', speedtest_file_view, name='speedtest'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

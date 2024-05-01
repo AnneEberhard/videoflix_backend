@@ -201,3 +201,5 @@ IMPORT_EXPORT_USE_TRANSACTIONS = True
 AUTH_USER_MODEL = 'user.CustomUser'
 
 TEST_RUNNER = 'tests.flake8_test.Flake8TestRunner'
+
+SPEEDTEST_FILES_ROOT = os.path.join(BASE_DIR, 'speedtest_files')

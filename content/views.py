@@ -8,7 +8,8 @@ from .serializer import VideoSerializer
 from .models import Video
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from django.core.cache import cache
-
+from django.http import FileResponse
+import os
 
 class CustomTokenAuthentication(TokenAuthentication):
     """
@@ -69,3 +70,10 @@ def video_overview(request):
         # Beware: Cave cached_data cannot be serialized twice!
 
     return JsonResponse(cached_data, safe=False)
+
+#@authentication_classes([CustomTokenAuthentication])
+#@permission_classes([IsAuthenticated])
+def speedtest_file_view(request):
+    file_path = os.path.join(settings.SPEEDTEST_FILES_ROOT, 'data_1mb.test')
+    print(file_path)
+    return FileResponse(open(file_path, 'rb'))
