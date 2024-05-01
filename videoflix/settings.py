@@ -198,3 +198,5 @@ BACKEND_URL = "http://127.0.0.1:8000"
 IMPORT_EXPORT_USE_TRANSACTIONS = True
 
 AUTH_USER_MODEL = 'user.CustomUser'
+
+TEST_RUNNER = 'tests.flake8_test.Flake8TestRunner'
