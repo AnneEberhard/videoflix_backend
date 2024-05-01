@@ -6,6 +6,7 @@ python manage.py rqworker --worker-class rq_win.WindowsWorker
 python export-data.py
 
 
+To clear Cache
 python manage.py shell
 
 >>> from django.core.cache import cache
@@ -14,3 +15,4 @@ python manage.py shell
 
 
 Documentation RST (ReStructured Text)
+http://localhost:8000/api/swagger/

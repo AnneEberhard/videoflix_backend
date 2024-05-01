@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'import_export',
     'content.apps.ContentConfig',
     'user',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [

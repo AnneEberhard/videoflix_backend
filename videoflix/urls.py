@@ -20,6 +20,22 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from user.views import ActivationView, ForgotView, LoginView, LogoutView, RegistrationView, ActivationSuccessView, ActivationFailureView, ResetView
 from content.views import video_overview
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="API Documentation",
+        default_version='v1',
+        description="API documentation for your project",
+        terms_of_service="https://www.example.com/terms/",
+        contact=openapi.Contact(email="contact@example.com"),
+        license=openapi.License(name="BSD License"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -34,4 +50,6 @@ urlpatterns = [
     path('activation/failure/', ActivationFailureView.as_view(), name='activation_failure'),
     path('forgot/', ForgotView.as_view(), name='forgot'),
     path('reset/<uidb64>/<token>/', ResetView.as_view(), name='password_reset_confirm'),
+    path('api/swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('api/redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
