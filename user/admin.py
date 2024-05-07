@@ -4,13 +4,14 @@ from .models import CustomUser
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 
+
 class UserResource(resources.ModelResource):
 
     class Meta:
         model = CustomUser
 
 
-class CustomUserAdmin(admin.ModelAdmin):
+class CustomUserAdmin(ImportExportModelAdmin):
     resource_classes = [UserResource]
     list_display = ('id', 'username', 'email', 'custom', 'phone', 'address')
     search_fields = ('username', 'email')
