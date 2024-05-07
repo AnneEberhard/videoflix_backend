@@ -1,10 +1,9 @@
 from django.contrib import admin
-from .forms import CustomUserChangeForm
+# from .forms import CustomUserChangeForm
 from .models import CustomUser
 
 
 class CustomUserAdmin(admin.ModelAdmin):
-    #form = CustomUserChangeForm
     list_display = ('id', 'username', 'email', 'custom', 'phone', 'address')
     search_fields = ('username', 'email')
     fieldsets = (
@@ -22,13 +21,14 @@ class CustomUserAdmin(admin.ModelAdmin):
         }),
     )
     ordering = ('email',)
+#
+#    def get_form(self, request, obj=None, **kwargs):
+#        if obj:  # If editing an existing object
+#            return CustomUserChangeForm
+#        else:   # If creating a new object
+#            return super().get_form(request, obj, **kwargs)
+#
 
-    def get_form(self, request, obj=None, **kwargs):
-        if obj:  # If editing an existing object
-            return CustomUserChangeForm
-        else:   # If creating a new object
-            return super().get_form(request, obj, **kwargs)
-        
     def save_model(self, request, obj, form, change):
         if obj.pk:
             # Existing user, hash the password if changed
@@ -38,5 +38,6 @@ class CustomUserAdmin(admin.ModelAdmin):
             # New user, set password and hash it
             obj.set_password(obj.password)
         obj.save()
+
 
 admin.site.register(CustomUser, CustomUserAdmin)

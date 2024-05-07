@@ -11,6 +11,7 @@ from django.core.cache import cache
 from django.http import FileResponse
 import os
 
+
 class CustomTokenAuthentication(TokenAuthentication):
     """
     Custom token-based authentication class.
@@ -71,8 +72,9 @@ def video_overview(request):
 
     return JsonResponse(cached_data, safe=False)
 
-#@authentication_classes([CustomTokenAuthentication])
-#@permission_classes([IsAuthenticated])
+
+@authentication_classes([CustomTokenAuthentication])
+@permission_classes([IsAuthenticated])
 def speedtest_file_view(request):
     file_path = os.path.join(settings.SPEEDTEST_FILES_ROOT, 'data_1mb.test')
     print(file_path)

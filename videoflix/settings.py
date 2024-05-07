@@ -139,17 +139,16 @@ DATABASES = {
     }
 }
 
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.postgresql',
-#        'NAME': 'videoflix_db',
-#        'USER': config('DB_ADMIN'),
-#        'PASSWORD': config('DB_PASSWORD'),
-#        'HOST': 'localhost',
-#        'PORT': '5432',
-#    }
-#}
-
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'videoflix_db',
+#         'USER': config('DB_ADMIN'),
+#         'PASSWORD': config('DB_PASSWORD'),
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
 
 
 # Password validation
@@ -194,7 +193,6 @@ STATICFILES_DIRS = [BASE_DIR / "static/style"]
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
