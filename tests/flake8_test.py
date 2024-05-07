@@ -11,4 +11,3 @@ class Flake8TestRunner(DiscoverRunner):
         print(flake8_result.stdout.decode('utf-8'))
         # Run the tests using the standard Django test runner
         return super().run_tests(test_labels, **kwargs)
-

@@ -16,3 +16,5 @@ python manage.py shell
 
 Documentation RST (ReStructured Text)
 http://localhost:8000/api/swagger/
+
+https://stackoverflow.com/questions/51462317/django-admin-change-user-password
