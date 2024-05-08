@@ -32,7 +32,7 @@ def set_staff_permissions(sender, instance, **kwargs):
     :type instance: CustomUser
     :param kwargs: Additional keyword arguments.
     """
-    if instance.is_staff:
+    if instance.is_staff and not instance.is_superuser:
         model_permissions = [
             ('add_video', 'Can add video', Video),
             ('change_video', 'Can change video', Video),
@@ -50,7 +50,12 @@ def set_staff_permissions(sender, instance, **kwargs):
             permission, created = Permission.objects.get_or_create(
                 codename=codename,
                 name=name,
-                content_type=ContentType.objects.get_for_model(model_class)
+                content_type=ContentType.objects.get_for_model(model_class),
+                defaults={
+                    "codename":codename,
+                    "name":name,
+                    "content_type":ContentType.objects.get_for_model(model_class),    
+                }   
             )
             if permission not in instance.user_permissions.all():
                 instance.user_permissions.add(permission)
