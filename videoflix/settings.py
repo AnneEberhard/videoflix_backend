@@ -31,11 +31,13 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'localhost',
-    '127.0.0.1',]
+    '127.0.0.1',
+    '34.34.178.94']
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:4200',
     'http://127.0.0.1:4200',
+    'http://34.34.178.94'
 ]
 
 CORS_ALLOWED_HEADERS = [
@@ -203,7 +205,8 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
 
 FRONTEND_URL = "localhost:4200"
-BACKEND_URL = "http://127.0.0.1:8000"
+#BACKEND_URL = "http://127.0.0.1:8000"
+BACKEND_URL = "http://34.34.178.94"
 
 
 IMPORT_EXPORT_USE_TRANSACTIONS = True
