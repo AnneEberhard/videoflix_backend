@@ -39,7 +39,7 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:4200',
     'http://127.0.0.1:4200',
     'http://34.34.178.94',
-    'http://admin.anderlandflix.com/',
+    'http://admin.anderlandflix.com',
 ]
 
 CORS_ALLOWED_HEADERS = [
