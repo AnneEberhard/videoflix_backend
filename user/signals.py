@@ -52,10 +52,10 @@ def set_staff_permissions(sender, instance, **kwargs):
                 name=name,
                 content_type=ContentType.objects.get_for_model(model_class),
                 defaults={
-                    "codename":codename,
-                    "name":name,
-                    "content_type":ContentType.objects.get_for_model(model_class),    
-                }   
+                    "codename": codename,
+                    "name": name,
+                    "content_type": ContentType.objects.get_for_model(model_class),
+                }
             )
             if permission not in instance.user_permissions.all():
                 instance.user_permissions.add(permission)

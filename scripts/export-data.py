@@ -1,6 +1,13 @@
+import sys
 import os
-import django
 import json
+
+current_directory = os.path.dirname(__file__)
+parent_directory = os.path.abspath(os.path.join(current_directory, '..'))
+
+sys.path.append(parent_directory)
+
+import django
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'videoflix.settings')
 
