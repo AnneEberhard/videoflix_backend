@@ -22,15 +22,20 @@ from django.contrib.auth import get_user_model
 from django.views.generic import TemplateView
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.cache import cache
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class RegistrationView(generics.CreateAPIView):
     """
     This view handles user registration and sends an activation email.
     Endpoints:
     - POST /register: Registers a new user and sends an activation email.
     """
+    @csrf_exempt
     def post(self, request):
+        print('register')
         email = request.data.get('email')
         username = request.data.get('username')
         password = request.data.get('password')
