@@ -38,7 +38,6 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
-    path('', admin.site.urls),
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
     path("__debug__/", include("debug_toolbar.urls")),
