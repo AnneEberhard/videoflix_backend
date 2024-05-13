@@ -35,14 +35,14 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     '34.34.178.94',
-    'admin.anderlandflix.com',]
+    'backend.anderlandflix.com',]
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:4200',
     'http://localhost:8000',
     'http://127.0.0.1:4200',
     'http://34.34.178.94',
-    'http://admin.anderlandflix.com',
+    'http://backend.anderlandflix.com',
 ]
 
 CORS_ALLOWED_HEADERS = [
