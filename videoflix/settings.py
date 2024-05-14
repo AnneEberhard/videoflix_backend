@@ -30,12 +30,13 @@ SECRET_KEY = 'django-insecure-wgyf-dlc0o8ca(^_wc2j8#yw&h5ax-2t(b-*h2eq@$!)z$485!
 DEBUG = True
 
 ALLOWED_HOSTS = [
+    'localhost', 
     'localhost:8000',
-    'localhost:4200',
-    'localhost',
-    '127.0.0.1',
+    'localhost:4200', 
+    '127.0.0.1', 
     '34.34.178.94',
     'backend.anderlandflix.com',]
+
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:4200',
