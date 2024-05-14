@@ -25,6 +25,10 @@ from django.core.cache import cache
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
+from django.http import HttpResponse
+
+def home_view(request):
+    return HttpResponse('<h1>Welcome to Anderlandflix</h1>')
 
 @method_decorator(csrf_exempt, name='dispatch')
 class RegistrationView(generics.CreateAPIView):

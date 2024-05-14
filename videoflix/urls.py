@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.conf import settings
 from django.urls import path, include
 from django.conf.urls.static import static
-from user.views import ActivationView, ForgotView, LoginView, LogoutView, RegistrationView, ActivationSuccessView, ActivationFailureView, ResetView
+from user.views import ActivationView, ForgotView, LoginView, LogoutView, RegistrationView, ActivationSuccessView, ActivationFailureView, ResetView, home_view
 from content.views import speedtest_file_view, video_overview
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
@@ -38,6 +38,7 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
+    path('', home_view, name='home'),
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
     path("__debug__/", include("debug_toolbar.urls")),
