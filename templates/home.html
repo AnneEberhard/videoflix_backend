@@ -1,0 +1,16 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <title>Welcome to Anderlandflix</title>
+</head>
+<body>
+    <h1>Welcome to Anderlandflix!</h1>
+    <h2>If you want to watch our videos, please go to the <a href="{{ frontend_url }}">frontend</a>.</h2>
+    <h2>If you are staff, please go to the <a href="{{ backend_url }}/admin">backend</a>.</h2>
+</body>
+</html>
+

@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.shortcuts import render
 from django.http import JsonResponse
 from rest_framework import generics, status
 from rest_framework.response import Response
@@ -28,7 +29,15 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 
 def home_view(request):
-    return HttpResponse('<h1>Welcome to Anderlandflix</h1>')
+    """
+    Thies views handles a landing page for the overall project
+    """
+    context = {
+        'frontend_url': settings.FRONTEND_URL,
+        'backend_url': settings.BACKEND_URL,
+    }
+    return render(request, "home.html", context)
+
 
 @method_decorator(csrf_exempt, name='dispatch')
 class RegistrationView(generics.CreateAPIView):

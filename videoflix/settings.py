@@ -213,8 +213,9 @@ EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
 
-FRONTEND_URL = "localhost:4200"
+FRONTEND_URL = "http://localhost:4200"
 BACKEND_URL = "http://127.0.0.1:8000"
+# FRONTEND_URL = "http://anderlandflix.com"
 # BACKEND_URL = "http://34.34.178.94"
 
 
