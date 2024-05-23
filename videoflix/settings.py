@@ -35,6 +35,7 @@ ALLOWED_HOSTS = [
     'localhost:4200', 
     '127.0.0.1', 
     '34.34.178.94',
+    '35.205.236.6',
     'backend.anderlandflix.com',]
 
 
