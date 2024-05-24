@@ -45,10 +45,18 @@ CORS_ALLOWED_ORIGINS = [
     'http://34.34.178.94',
     'http://backend.anderlandflix.com',
     'http://anderlandflix.com',
+    'https://34.34.178.94',
+    'https://backend.anderlandflix.com',
+    'https://anderlandflix.com',
 ]
 
 CORS_ALLOWED_HEADERS = [
-    "cache-control", "pragma", "expires"
+    "authorization",
+    "content-type",
+    "cache-control",
+    "pragma",
+    "expires",
+    "x-requested-with",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
