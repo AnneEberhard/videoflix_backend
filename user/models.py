@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 
 class UserManager(BaseUserManager):
     """
-    The dadpated Manager for users
+    The adpated Manager for users
     """
     use_in_migration = True
 
