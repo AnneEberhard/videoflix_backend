@@ -47,7 +47,7 @@ def set_staff_permissions(sender, instance, **kwargs):
             ('view_customuser', 'Can view custom user', CustomUser),
         ]
         for codename, name, model_class in model_permissions:
-            content_type=ContentType.objects.get_for_model(model_class)
+            content_type = ContentType.objects.get_for_model(model_class)
             permission, created = Permission.objects.get_or_create(
                 codename=codename,
                 content_type=content_type,

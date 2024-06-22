@@ -30,10 +30,10 @@ SECRET_KEY = 'django-insecure-wgyf-dlc0o8ca(^_wc2j8#yw&h5ax-2t(b-*h2eq@$!)z$485!
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'localhost', 
+    'localhost',
     'localhost:8000',
-    'localhost:4200', 
-    '127.0.0.1', 
+    'localhost:4200',
+    '127.0.0.1',
     '35.205.236.6',
     'backend.anderlandflix.com',]
 
@@ -117,7 +117,7 @@ RQ_QUEUES = {
         'HOST': 'localhost',
         'PORT': 6379,
         'DB': 0,
-        #'PASSWORD': config('RQ_QUEUES_PASSWORD'),
+        # 'PASSWORD': config('RQ_QUEUES_PASSWORD'),
         'DEFAULT_TIMEOUT': 360,
     },
 }
