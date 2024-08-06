@@ -53,7 +53,6 @@ def update_thumbnail(sender, instance, **kwargs):
     :type instance: Any
     :param kwargs: Additional keyword arguments
     """
-    print("Entering pre_save signal")
     if instance.pk:
         try:
             old_instance = Video.objects.get(pk=instance.pk)

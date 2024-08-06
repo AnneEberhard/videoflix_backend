@@ -35,14 +35,17 @@ ALLOWED_HOSTS = [
     'localhost:4200',
     '127.0.0.1',
     '35.205.236.6',
+    '34.38.123.38',
     'backend.anderlandflix.com',]
 
+# after restart google cloud: 34.38.123.38
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:4200',
     'http://localhost:8000',
     'http://127.0.0.1:4200',
     'http://34.34.178.94',
+    'http://34.38.123.38',
     'http://backend.anderlandflix.com',
     'http://anderlandflix.com',
     'https://34.34.178.94',
@@ -222,10 +225,10 @@ EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
 
-# FRONTEND_URL = "http://localhost:4200"
-# BACKEND_URL = "http://127.0.0.1:8000"
-FRONTEND_URL = "http://anderlandflix.com"
-BACKEND_URL = "http://35.205.236.6"
+FRONTEND_URL = "http://localhost:4200"
+BACKEND_URL = "http://127.0.0.1:8000"
+# FRONTEND_URL = "http://anderlandflix.com"
+# BACKEND_URL = "http://35.205.236.6"
 
 
 IMPORT_EXPORT_USE_TRANSACTIONS = True
